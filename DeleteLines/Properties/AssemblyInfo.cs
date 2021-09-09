@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("DeleteLines")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Simple Application that deletes a specifc line number in a collection of files")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("DeleteLines")]

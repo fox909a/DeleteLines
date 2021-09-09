@@ -50,7 +50,7 @@
             // 
             this.button1.Location = new System.Drawing.Point(9, 91);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(443, 23);
+            this.button1.Size = new System.Drawing.Size(429, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Scan For Files";
             this.button1.UseVisualStyleBackColor = true;
@@ -111,7 +111,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(384, 12);
+            this.button2.Location = new System.Drawing.Point(366, 10);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(72, 23);
             this.button2.TabIndex = 7;
@@ -124,7 +124,7 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(86, 120);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(366, 134);
+            this.listBox1.Size = new System.Drawing.Size(352, 134);
             this.listBox1.TabIndex = 8;
             // 
             // label4
@@ -140,7 +140,7 @@
             // 
             this.button4.Location = new System.Drawing.Point(9, 289);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(443, 23);
+            this.button4.Size = new System.Drawing.Size(429, 23);
             this.button4.TabIndex = 11;
             this.button4.Text = "Perform Delete";
             this.button4.UseVisualStyleBackColor = true;
@@ -166,7 +166,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(468, 324);
+            this.ClientSize = new System.Drawing.Size(450, 324);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label4);
@@ -179,6 +179,8 @@
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Delete Lines";
             this.Load += new System.EventHandler(this.Form1_Load);
