@@ -1,5 +1,6 @@
 ﻿using DeleteLines.Domain;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
@@ -7,9 +8,9 @@ using System.Windows.Forms;
 
 namespace DeleteLines
 {
-    public partial class Form1 : Form
+    public partial class MainFrm : Form
     {
-        public Form1()
+        public MainFrm()
         {
             InitializeComponent();
         }
@@ -23,11 +24,11 @@ namespace DeleteLines
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button2_Click(object sender, EventArgs e)
+        private void browseBTN_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                this.textBox1.Text = this.folderBrowserDialog1.SelectedPath;
+                this.folderTXTBX.Text = this.folderBrowserDialog1.SelectedPath;
             }
         }
 
@@ -36,55 +37,22 @@ namespace DeleteLines
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
+        private void fileScanBTN_Click(object sender, EventArgs e)
         {
-            DirectoryInfo di = new DirectoryInfo(this.textBox1.Text);
-
-            string rawList = this.textBox2.Text;
-            string[] splits = rawList.Split(',');
-
-            this.listBox1.Items.Clear();
-
-            foreach (string split in splits)
+            if (ValidateFolderText() && ValidateExText())
             {
-                foreach (FileInfo fileInfo in di.GetFiles(split, SearchOption.TopDirectoryOnly))
+                string folder = this.folderTXTBX.Text;
+                string exts = this.extensionsTXTBX.Text;
+                bool result = false;
+
+                result = DeleteLineUtil.PopulateListBoxWithFileNames(folder,exts,this.fileListLSTBOX);
+
+                if (!result)
                 {
-                    this.listBox1.Items.Add(fileInfo.Name);
+                    MessageBox.Show("Sorry there was an Error!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+
             }
-        }
-
-        /// <summary>
-        /// Checks if the line number textbox is valid
-        /// </summary>
-        /// <returns>Returns true if line number textbox is populated</returns>
-        private bool ValidateLineNumberText()
-        {
-            bool bStatus = DeleteLineValidator.ValidateTextBox(textBox3, errorProvider1, "Please enter a valid number", true);
-
-            return bStatus;
-        }
-
-        /// <summary>
-        /// Checks if the folder textbox is valid
-        /// </summary>
-        /// <returns>Returns true if folder textbox is populated</returns>
-        private bool ValidateFolderText()
-        {
-            bool bStatus = DeleteLineValidator.ValidateTextBox(textBox1, errorProvider1, "Please select a folder!", false);
-
-            return bStatus;
-        }
-
-        /// <summary>
-        /// Checks if the File Extension textbox is valid
-        /// </summary>
-        /// <returns>Returns true if File Extension textbox is populated</returns>
-        private bool ValidateExText()
-        {
-            bool bStatus = DeleteLineValidator.ValidateTextBox(textBox2, errorProvider1, "Please enter a file extension e.g. *.txt", false);
-
-            return bStatus;
         }
 
         /// <summary>
@@ -92,55 +60,69 @@ namespace DeleteLines
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button4_Click(object sender, EventArgs e)
+        private void deleteBTN_Click(object sender, EventArgs e)
         {
+
             if (ValidateForm())
             {
-                string backupLocation = this.textBox1.Text + @"\backups";
-                string loc = this.textBox1.Text;
+                string folder = this.folderTXTBX.Text;
+                bool createBackup = true;
+                bool result = false;
+                int lineNumber = int.Parse(lineTXTBX.Text);
+                List<string> filenames = new List<string>();
 
-                if (checkBox1.CheckState == CheckState.Checked)
+                foreach (string x in this.fileListLSTBOX.Items)
                 {
-                    System.IO.Directory.CreateDirectory(backupLocation);
-
-                    foreach (string fileLocation in listBox1.Items)
-                    {
-                        System.IO.File.Copy(this.textBox1.Text + @"\" + fileLocation, backupLocation + @"\" + fileLocation, true);
-                    }
+                    filenames.Add(x);
                 }
 
-                foreach (string fileLocation in listBox1.Items)
+                if (this.checkBox1.CheckState == CheckState.Unchecked)
                 {
-                    string filename = loc + @"\" + fileLocation;
-
-                    StringBuilder sb = new StringBuilder();
-                    using (StreamReader sr = new StreamReader(filename))
-                    {
-                        int Countup = 0;
-                        while (!sr.EndOfStream)
-                        {
-                            Countup++;
-                            if (Countup != int.Parse(this.textBox3.Text))
-                            {
-                                using (StringWriter sw = new StringWriter(sb))
-                                {
-                                    sw.WriteLine(sr.ReadLine());
-                                }
-                            }
-                            else
-                            {
-                                sr.ReadLine();
-                            }
-                        }
-                    }
-
-                    using (StreamWriter sw = new StreamWriter(filename))
-                    {
-                        sw.Write(sb.ToString());
-                    }
+                    createBackup = false;
                 }
-                MessageBox.Show("Complete", "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                result = DeleteLineUtil.PerformDelete(folder, createBackup, filenames, lineNumber);
+
+                if(result)
+                {
+                    MessageBox.Show("Complete", "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Sorry there was an Error, No delete performed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void folderTXTBX_Validating(object sender, EventArgs e)
+        {
+            ValidateFolderText();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void extensionsTXTBX_Validating(object sender, CancelEventArgs e)
+        {
+            ValidateExText();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lineTXTBX_Validating(object sender, CancelEventArgs e)
+        {
+            ValidateLineNumberText();
         }
 
         /// <summary>
@@ -151,9 +133,9 @@ namespace DeleteLines
         {
             bool result = false;
 
-            bool bValidLineNumber = DeleteLineValidator.ValidateTextBox(textBox3, errorProvider1, "Please enter a valid number", true);
-            bool bValidateExText = DeleteLineValidator.ValidateTextBox(textBox1, errorProvider1, "Please select a folder!", false);
-            bool bValidateFolderText = DeleteLineValidator.ValidateTextBox(textBox2, errorProvider1, "Please enter a file extension e.g. *.txt", false);
+            bool bValidLineNumber = DeleteLineValidator.ValidateTextBox(lineTXTBX, errorProvider1, "Please enter a valid number", true);
+            bool bValidateExText = DeleteLineValidator.ValidateTextBox(folderTXTBX, errorProvider1, "Please select a folder!", false);
+            bool bValidateFolderText = DeleteLineValidator.ValidateTextBox(extensionsTXTBX, errorProvider1, "Please enter a file extension e.g. *.txt", false);
 
             if (bValidLineNumber && bValidateExText && bValidateFolderText)
             {
@@ -164,33 +146,46 @@ namespace DeleteLines
         }
 
         /// <summary>
-        ///
+        /// Checks if the File Extension textbox is valid
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        /// <returns>Returns true if File Extension textbox is populated</returns>
+        private bool ValidateExText()
         {
-            ValidateFolderText();
+            bool bStatus = DeleteLineValidator.ValidateTextBox(extensionsTXTBX, errorProvider1, "Please enter a file extension e.g. *.txt", false);
+
+            return bStatus;
         }
 
         /// <summary>
-        ///
+        /// Checks if the line number textbox is valid
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        /// <returns>Returns true if line number textbox is populated</returns>
+        private bool ValidateLineNumberText()
         {
-            ValidateExText();
+            bool bStatus = DeleteLineValidator.ValidateTextBox(lineTXTBX, errorProvider1, "Please enter a valid number", true);
+
+            return bStatus;
         }
 
         /// <summary>
-        ///
+        /// Checks if the folder textbox is valid
+        /// </summary>
+        /// <returns>Returns true if folder textbox is populated</returns>
+        private bool ValidateFolderText()
+        {
+            bool bStatus = DeleteLineValidator.ValidateTextBox(folderTXTBX, errorProvider1, "Please select a folder!", false);
+
+            return bStatus;
+        }
+
+        /// <summary>
+        /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void textBox3_Validating(object sender, CancelEventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ValidateLineNumberText();
+            this.Close();
         }
     }
 }
