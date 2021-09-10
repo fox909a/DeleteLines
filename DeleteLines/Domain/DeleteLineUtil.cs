@@ -1,16 +1,15 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DeleteLines.Domain
 {
     public sealed class DeleteLineUtil
     {
-
+        private static NLog.ILogger logger = LogManager.GetLogger("Nlog.config");
         private static DeleteLineUtil instance = null;
 
         private DeleteLineUtil()
@@ -35,7 +34,6 @@ namespace DeleteLines.Domain
 
             try
             {
-
                 DirectoryInfo di = new DirectoryInfo(folder);
 
                 string rawList = extensions;
@@ -48,20 +46,20 @@ namespace DeleteLines.Domain
                     foreach (FileInfo fileInfo in di.GetFiles(split, SearchOption.TopDirectoryOnly))
                     {
                         listBox.Items.Add(fileInfo.Name);
+                        logger.Info("File " + fileInfo.Name.ToString() + " found");
                     }
                 }
 
-
                 result = true;
-               
             }
             catch (Exception ex)
             {
+                logger.Error(ex.Message);
                 result = false;
             }
             return result;
         }
-  
+
         public static bool PerformDelete(string folder, bool createBackup, List<String> fileNames, int lineNumber)
         {
             bool result = false;
@@ -77,6 +75,8 @@ namespace DeleteLines.Domain
                     foreach (string fileLocation in fileNames)
                     {
                         System.IO.File.Copy(folder + @"\" + fileLocation, backupLocation + @"\" + fileLocation, true);
+
+                        logger.Info("Backup created for file " + folder + @"\" + fileLocation + " in folder " + backupLocation + @"\" + fileLocation);
                     }
                 }
 
@@ -100,6 +100,7 @@ namespace DeleteLines.Domain
                             }
                             else
                             {
+                                logger.Info("Line '" + sr.ReadLine() + "' removed from file " + filename);
                                 sr.ReadLine();
                             }
                         }
@@ -109,12 +110,12 @@ namespace DeleteLines.Domain
                     {
                         sw.Write(sb.ToString());
                     }
-                   
                 }
                 result = true;
             }
             catch (Exception ex)
             {
+                logger.Error(ex.Message);
                 result = false;
             }
             return result;

@@ -1,15 +1,17 @@
 ﻿using DeleteLines.Domain;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
 
 namespace DeleteLines
 {
     public partial class MainFrm : Form
     {
+        //create logger
+        private static NLog.ILogger logger = LogManager.GetLogger("Nlog.config");
+
         public MainFrm()
         {
             InitializeComponent();
@@ -17,6 +19,7 @@ namespace DeleteLines
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.helpProvider1.HelpNamespace = "DeleteLineHelp.chm";
         }
 
         /// <summary>
@@ -26,9 +29,12 @@ namespace DeleteLines
         /// <param name="e"></param>
         private void browseBTN_Click(object sender, EventArgs e)
         {
+            logger.Info("Clicked browse file button");
+
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 this.folderTXTBX.Text = this.folderBrowserDialog1.SelectedPath;
+                logger.Info("folderTXTBX.Text set to " + this.folderTXTBX.Text);
             }
         }
 
@@ -39,19 +45,21 @@ namespace DeleteLines
         /// <param name="e"></param>
         private void fileScanBTN_Click(object sender, EventArgs e)
         {
+            logger.Info("Clicked scan file button");
+            logger.Info("Folder scan performed on " + this.folderTXTBX.Text);
+
             if (ValidateFolderText() && ValidateExText())
             {
                 string folder = this.folderTXTBX.Text;
                 string exts = this.extensionsTXTBX.Text;
                 bool result = false;
 
-                result = DeleteLineUtil.PopulateListBoxWithFileNames(folder,exts,this.fileListLSTBOX);
+                result = DeleteLineUtil.PopulateListBoxWithFileNames(folder, exts, this.fileListLSTBOX);
 
                 if (!result)
                 {
                     MessageBox.Show("Sorry there was an Error!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
             }
         }
 
@@ -62,6 +70,7 @@ namespace DeleteLines
         /// <param name="e"></param>
         private void deleteBTN_Click(object sender, EventArgs e)
         {
+            logger.Info("Clicked delete button");
 
             if (ValidateForm())
             {
@@ -83,7 +92,7 @@ namespace DeleteLines
 
                 result = DeleteLineUtil.PerformDelete(folder, createBackup, filenames, lineNumber);
 
-                if(result)
+                if (result)
                 {
                     MessageBox.Show("Complete", "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -91,7 +100,6 @@ namespace DeleteLines
                 {
                     MessageBox.Show("Sorry there was an Error, No delete performed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
             }
         }
 
@@ -179,13 +187,26 @@ namespace DeleteLines
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            logger.Info("Close menu item clicked");
             this.Close();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logger.Info("About menu item clicked");
+            AboutBoxFrm aboutBox = new AboutBoxFrm();
+            aboutBox.ShowDialog();
         }
     }
 }
