@@ -208,5 +208,10 @@ namespace DeleteLines
             AboutBoxFrm aboutBox = new AboutBoxFrm();
             aboutBox.ShowDialog();
         }
+
+        private void viewHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
