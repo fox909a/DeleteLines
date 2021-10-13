@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>ABC8153B6C473DF09066DA8F4C34ED9DB4545B90</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>908C9908A8611A7ACB0C9E09EF7FAC2A2FEA0A45</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>DeleteLines_TemporaryKey.pfx</ManifestKeyFile>

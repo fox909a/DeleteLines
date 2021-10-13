@@ -19,7 +19,7 @@ namespace DeleteLines
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.helpProvider1.HelpNamespace = "DeleteLineHelp.chm";
+            this.folderTXTBX.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory).ToString();
         }
 
         /// <summary>
@@ -70,6 +70,8 @@ namespace DeleteLines
         /// <param name="e"></param>
         private void deleteBTN_Click(object sender, EventArgs e)
         {
+
+            errorProvider1.Clear();
             logger.Info("Clicked delete button");
 
             if (ValidateForm())
@@ -141,9 +143,9 @@ namespace DeleteLines
         {
             bool result = false;
 
-            bool bValidLineNumber = DeleteLineValidator.ValidateTextBox(lineTXTBX, errorProvider1, "Please enter a valid number", true);
-            bool bValidateExText = DeleteLineValidator.ValidateTextBox(folderTXTBX, errorProvider1, "Please select a folder!", false);
-            bool bValidateFolderText = DeleteLineValidator.ValidateTextBox(extensionsTXTBX, errorProvider1, "Please enter a file extension e.g. *.txt", false);
+            bool bValidLineNumber = DeleteLineValidator.ValidateTextBox(lineTXTBX, errorProvider1, "Please enter a valid number", true,false);
+            bool bValidateExText = DeleteLineValidator.ValidateTextBox(folderTXTBX, errorProvider1, "Please select a folder!", false, true); ;
+            bool bValidateFolderText = DeleteLineValidator.ValidateTextBox(extensionsTXTBX, errorProvider1, "Please enter a file extension e.g. *.txt", false,false);
 
             if (bValidLineNumber && bValidateExText && bValidateFolderText)
             {
@@ -159,7 +161,7 @@ namespace DeleteLines
         /// <returns>Returns true if File Extension textbox is populated</returns>
         private bool ValidateExText()
         {
-            bool bStatus = DeleteLineValidator.ValidateTextBox(extensionsTXTBX, errorProvider1, "Please enter a file extension e.g. *.txt", false);
+            bool bStatus = DeleteLineValidator.ValidateTextBox(extensionsTXTBX, errorProvider1, "Please enter a file extension e.g. *.txt", false,false);
 
             return bStatus;
         }
@@ -170,7 +172,7 @@ namespace DeleteLines
         /// <returns>Returns true if line number textbox is populated</returns>
         private bool ValidateLineNumberText()
         {
-            bool bStatus = DeleteLineValidator.ValidateTextBox(lineTXTBX, errorProvider1, "Please enter a valid number", true);
+            bool bStatus = DeleteLineValidator.ValidateTextBox(lineTXTBX, errorProvider1, "Please enter a valid number", true,false);
 
             return bStatus;
         }
@@ -181,7 +183,7 @@ namespace DeleteLines
         /// <returns>Returns true if folder textbox is populated</returns>
         private bool ValidateFolderText()
         {
-            bool bStatus = DeleteLineValidator.ValidateTextBox(folderTXTBX, errorProvider1, "Please select a folder!", false);
+            bool bStatus = DeleteLineValidator.ValidateTextBox(folderTXTBX, errorProvider1, "Please select a folder!", false,true);
 
             return bStatus;
         }
@@ -213,5 +215,6 @@ namespace DeleteLines
         {
 
         }
+
     }
 }

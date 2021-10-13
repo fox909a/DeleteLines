@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.Windows.Forms;
 
 namespace DeleteLines.Domain
 {
@@ -22,10 +23,27 @@ namespace DeleteLines.Domain
             }
         }
 
-        public static bool ValidateTextBox(TextBox textbox, ErrorProvider errorProvider, string message, bool checkIfNumeric)
+        public static bool ValidateTextBox(TextBox textbox, ErrorProvider errorProvider, string message, bool checkIfNumeric,bool checkValidDIr)
         {
             bool result = true;
             bool isNumber = false;
+          
+            if (string.IsNullOrEmpty(textbox.Text))
+            {
+                errorProvider.SetError(textbox, message);
+                result = false;
+                return result;
+            }
+
+            if (checkValidDIr)
+            {
+                if (!Directory.Exists(textbox.Text))
+                {
+                    errorProvider.SetError(textbox, message);
+                    result = false;
+                    return result;
+                }
+            }
 
             if (checkIfNumeric)
             {
@@ -37,13 +55,6 @@ namespace DeleteLines.Domain
                     result = false;
                     return result;
                 }
-            }
-
-            if (string.IsNullOrEmpty(textbox.Text))
-            {
-                errorProvider.SetError(textbox, message);
-                result = false;
-                return result;
             }
 
             return result;
